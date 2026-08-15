@@ -1,24 +1,350 @@
----
-title: app.json / app.config.js
-description: A reference of available properties in Expo app config.
-maxHeadingDepth: 5
----
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Image,
+  SafeAreaView
+} from 'react-native';
 
-import { BookOpen02Icon } from '@expo/styleguide-icons/outline/BookOpen02Icon';
+const products = [
+  {
+    id: 1,
+    name: 'کشمش سبز افغانستان',
+    price: 4.5,
+    weight: '250 گرم',
+    image: 'https://images.unsplash.com/photo-1599599810694-b5ac0dd1e2f3?w=600'
+  },
+  {
+    id: 2,
+    name: 'انجیر خشک ممتاز',
+    price: 6.3,
+    weight: '250 گرم',
+    image: 'https://images.unsplash.com/photo-1601379760883-1bb497c55842?w=600'
+  },
+  {
+    id: 3,
+    name: 'خرمای مضافتی',
+    price: 4.8,
+    weight: '500 گرم',
+    image: 'https://images.unsplash.com/photo-1608042314453-ae338d80c427?w=600'
+  },
+  {
+    id: 4,
+    name: 'پسته خام',
+    price: 13.5,
+    weight: '500 گرم',
+    image: 'https://images.unsplash.com/photo-1536591375667-f2d8c1b0c7a8?w=600'
+  }
+];
 
-import schema from '~/public/static/schemas/v54.0.0/app-config-schema.json';
-import AppConfigSchemaTable from '~/ui/components/AppConfigSchemaTable';
-import { BoxLink } from '~/ui/components/BoxLink';
+export default function App() {
+  const [cart, setCart] = useState([]);
 
-The following is a list of properties that are available for you under the `"expo"` key in **app.json** or **app.config.json**. These properties can be passed to the top level object of **app.config.js** or **app.config.ts**.
+  const addToCart = (product) => {
+    setCart([...cart, product]);
+  };
 
-<BoxLink
-  title="Configuration with app config"
-  description="For information on app configuration, the differences between various app config files, and how to use them dynamically."
-  href="/workflow/configuration/"
-  Icon={BookOpen02Icon}
-/>
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-## Properties
+  return (
+    <SafeAreaView style={styles.container}>
 
-<AppConfigSchemaTable schema={schema} />
+      <View style={styles.header}>
+        <Text style={styles.logo}>
+          Fresh<Text style={styles.orange}>Dry</Text>
+        </Text>
+
+        <Text style={styles.madrid}>Madrid</Text>
+
+        <Text style={styles.cart}>
+          🛒 {cart.length}
+        </Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
+
+        <View style={styles.hero}>
+          <Text style={styles.heroTitle}>
+            میوه تازه و خشک{'\n'}
+            مستقیم به خانه شما
+          </Text>
+
+          <Text style={styles.heroText}>
+            کیفیت خوب، قیمت منصفانه و تحویل در مادرید
+          </Text>
+
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>
+              همین حالا خرید کنید
+            </Text>
+          </Pressable>
+        </View>
+
+        <Text style={styles.sectionTitle}>
+          دسته‌بندی‌ها
+        </Text>
+
+        <View style={styles.categories}>
+          <Text style={styles.category}>🍎 میوه تازه</Text>
+          <Text style={styles.category}>🥭 میوه خشک</Text>
+          <Text style={styles.category}>🥜 آجیل</Text>
+          <Text style={styles.category}>🎁 بسته ویژه</Text>
+        </View>
+
+        <Text style={styles.sectionTitle}>
+          محصولات ویژه
+        </Text>
+
+        <View style={styles.grid}>
+
+          {products.map((product) => (
+
+            <View style={styles.card} key={product.id}>
+
+              <Image
+                source={{ uri: product.image }}
+                style={styles.image}
+              />
+
+              <Text style={styles.productName}>
+                {product.name}
+              </Text>
+
+              <Text style={styles.weight}>
+                {product.weight}
+              </Text>
+
+              <View style={styles.bottom}>
+
+                <Text style={styles.price}>
+                  €{product.price.toFixed(2)}
+                </Text>
+
+                <Pressable
+                  style={styles.addButton}
+                  onPress={() => addToCart(product)}
+                >
+                  <Text style={styles.addText}>+</Text>
+                </Pressable>
+
+              </View>
+
+            </View>
+
+          ))}
+
+        </View>
+
+        {cart.length > 0 && (
+
+          <View style={styles.cartBox}>
+
+            <Text style={styles.cartTitle}>
+              🛒 سبد خرید
+            </Text>
+
+            <Text>
+              تعداد محصولات: {cart.length}
+            </Text>
+
+            <Text style={styles.total}>
+              مجموع: €{total.toFixed(2)}
+            </Text>
+
+            <Pressable style={styles.checkout}>
+              <Text style={styles.buttonText}>
+                ثبت سفارش
+              </Text>
+            </Pressable>
+
+          </View>
+
+        )}
+
+      </ScrollView>
+
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff'
+  },
+
+  header: {
+    height: 65,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eeeeee'
+  },
+
+  logo: {
+    fontSize: 25,
+    fontWeight: '800',
+    color: '#238b45'
+  },
+
+  orange: {
+    color: '#f28c28'
+  },
+
+  madrid: {
+    flex: 1,
+    marginLeft: 8,
+    color: '#666'
+  },
+
+  cart: {
+    fontSize: 17
+  },
+
+  content: {
+    padding: 16,
+    paddingBottom: 50
+  },
+
+  hero: {
+    backgroundColor: '#eaf7ed',
+    borderRadius: 22,
+    padding: 22,
+    marginBottom: 20
+  },
+
+  heroTitle: {
+    fontSize: 25,
+    fontWeight: '800',
+    lineHeight: 34
+  },
+
+  heroText: {
+    marginTop: 8,
+    color: '#555',
+    lineHeight: 22
+  },
+
+  button: {
+    backgroundColor: '#249447',
+    padding: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    marginTop: 16
+  },
+
+  buttonText: {
+    color: '#ffffff',
+    fontWeight: '800',
+    fontSize: 16
+  },
+
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    marginVertical: 12
+  },
+
+  categories: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8
+  },
+
+  category: {
+    backgroundColor: '#f4f5f4',
+    padding: 13,
+    borderRadius: 14
+  },
+
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12
+  },
+
+  card: {
+    width: '47%',
+    backgroundColor: '#ffffff',
+    borderRadius: 18,
+    padding: 9,
+    elevation: 2
+  },
+
+  image: {
+    width: '100%',
+    height: 120,
+    borderRadius: 14
+  },
+
+  productName: {
+    fontWeight: '700',
+    fontSize: 14,
+    marginTop: 8
+  },
+
+  weight: {
+    color: '#777',
+    fontSize: 12,
+    marginTop: 4
+  },
+
+  bottom: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8
+  },
+
+  price: {
+    flex: 1,
+    fontSize: 17,
+    fontWeight: '800'
+  },
+
+  addButton: {
+    backgroundColor: '#249447',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  addText: {
+    color: '#ffffff',
+    fontSize: 25
+  },
+
+  cartBox: {
+    marginTop: 25,
+    padding: 20,
+    borderRadius: 18,
+    backgroundColor: '#f3f8f4'
+  },
+
+  cartTitle: {
+    fontSize: 21,
+    fontWeight: '800',
+    marginBottom: 8
+  },
+
+  total: {
+    fontSize: 20,
+    fontWeight: '800',
+    marginTop: 8
+  },
+
+  checkout: {
+    backgroundColor: '#249447',
+    padding: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    marginTop: 15
+  }
+
+});
